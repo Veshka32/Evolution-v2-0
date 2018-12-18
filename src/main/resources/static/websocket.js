@@ -11,7 +11,7 @@ function send() {
 function connect() {
     stompClient.connect({}, function(frame) {
         console.log('Connected: ' + frame);
-        stompClient.subscribe('/topic/messages/'+id, function(message) {
+        stompClient.subscribe('/user/queue/messages', function (message) {
             console.log(message);
         });
     });
