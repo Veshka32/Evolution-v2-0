@@ -1,7 +1,7 @@
 const tcp = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
 const host = window.location.host;
-const path = window.location.pathname.substring(0, window.location.pathname.lastIndexOf(".")); //url without .html
-const id=1;
+const url = window.location.href;
+const id = new URL(url).searchParams.get('id');
 const socket = tcp + host+'/chat';
 const stompClient = Stomp.client(socket);
 function send() {
