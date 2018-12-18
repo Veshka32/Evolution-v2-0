@@ -1,4 +1,4 @@
-package com;
+package com.model;
 
 import com.services.Role;
 

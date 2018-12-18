@@ -3,8 +3,8 @@
  */
 package com.services;
 
-import com.User;
-import com.UserRepository;
+import com.model.User;
+import com.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
