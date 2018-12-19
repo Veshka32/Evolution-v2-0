@@ -1,8 +1,9 @@
 /**
  * This class implements {@code UserDetailService} interface used in SpringSecurity module
  */
-package com.services;
+package com.services.implementations;
 
+import com.helpers.Role;
 import com.model.User;
 import com.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;

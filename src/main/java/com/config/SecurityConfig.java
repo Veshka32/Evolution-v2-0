@@ -33,7 +33,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers("/user/**").hasRole("USER")
                 .antMatchers("/game/**").hasRole("USER")
                 .and()
-                    .formLogin().loginPage("/login").permitAll()
+                .formLogin().loginPage("/login")
                     .defaultSuccessUrl("/",false)
                     .failureUrl("/login?error")
                 .and()
@@ -44,7 +44,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return new BCryptPasswordEncoder(5);
     }
 
 }
