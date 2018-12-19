@@ -21,10 +21,8 @@ public class User {
     @Column(unique = true, nullable = false, length = 50)
     private String email;
 
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     @ElementCollection
-    @JoinTable(name = "user_roles",
-            joinColumns = {@JoinColumn(name = "user_id")})
     private Set<Role> roles = new HashSet<>();
 
     @Override

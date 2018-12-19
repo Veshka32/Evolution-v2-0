@@ -41,7 +41,6 @@ public class UserService implements UserServiceI {
         user.setPassword(encoder.encode(dto.getPassword()));
         user.addRole(Role.ROLE_USER);
         repository.save(user);
-        dto.setPassword(null);
         return Optional.empty();
     }
 }
