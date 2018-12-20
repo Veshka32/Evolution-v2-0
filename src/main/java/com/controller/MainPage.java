@@ -1,18 +1,20 @@
 package com.controller;
 
-import com.repositories.UserRepository;
+import com.services.implementations.GameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class MainPage {
 
     @Autowired
-    UserRepository userRepository;
+    GameService gameService;
 
-    @GetMapping("/")
-    public String hello() {
+    @GetMapping({"/", "index"})
+    public String hello(Model model) {
+        model.addAttribute("games", gameService.getAllGames());
         return "index";
     }
 

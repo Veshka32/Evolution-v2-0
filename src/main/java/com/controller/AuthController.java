@@ -60,7 +60,7 @@ public class AuthController {
             LoggerFactory.getLogger(AuthController.class).warn("failed log in after sign up: ", e);
             return "login";
         }
-        return "test";
+        return "redirect:/";
     }
 
 }
