@@ -1,7 +1,7 @@
-package com.model.game;
+package com.game;
 
-import com.model.game.constants.Constants;
-import com.model.game.constants.Property;
+import com.game.constants.Constants;
+import com.game.constants.Property;
 
 import java.util.ArrayList;
 import java.util.Collections;

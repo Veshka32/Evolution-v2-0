@@ -1,46 +1,83 @@
-package com.model.game;
+package com.game;
 
-import com.google.gson.annotations.Expose;
-import com.model.game.constants.Constants;
-import com.model.game.constants.Property;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.game.constants.Constants;
+import com.game.constants.Property;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@JsonInclude(JsonInclude.Include.NON_EMPTY) //skip empty collections
 public class Animal {
-
-    @Expose
-    final List<Property> propertyList = new ArrayList<>();
-    @Expose
-    final List<Integer> cooperateTo = new ArrayList<>();
-    private final int MIN_HUNGRY = 1;
-    @Expose
-    final private List<Integer> communicateTo = new ArrayList<>();
-    @Expose
-    private final List<Integer> symbiontFor = new ArrayList<>();
-    @Expose
-    private final List<Integer> symbiosisWith = new ArrayList<>();
-    Player owner;
-    boolean fed;
-    boolean poisoned;
-    int totalFatSupply;
-    @Expose
-    int hungry = MIN_HUNGRY;
-    private int trueId;
-    private Game observer;
-    private boolean doPiracy;
-    private boolean doGrazing;
-    private int hibernationRound;
-    private boolean attack;
+    @JsonIgnore
+    private final Player owner;
     //include in json
-    @Expose
-    private String ownerName;
-    @Expose
-    private int id;
-    @Expose
+    private final String ownerName;
+    private final int id;
+    private final List<Property> propertyList = new ArrayList<>();
+    private final List<Integer> cooperateTo = new ArrayList<>();
+    private final List<Integer> communicateTo = new ArrayList<>();
+    private final List<Integer> symbiontFor = new ArrayList<>();
+    private final List<Integer> symbiosisWith = new ArrayList<>();
+    @JsonIgnore
+    private boolean fed;
+    @JsonIgnore
+    private boolean poisoned;
+    @JsonIgnore
+    private int totalFatSupply;
+    @JsonIgnore
+    private Game observer;
+    @JsonIgnore
+    private boolean doPiracy;
+    @JsonIgnore
+    private boolean doGrazing;
+    @JsonIgnore
+    private int hibernationRound;
+    @JsonIgnore
+    private boolean attack;
+    private int hungry = Constants.MIN_HUNGRY.getValue();
+
+    public String getOwnerName() {
+        return ownerName;
+    }
+
+    public int getCurrentFatSupply() {
+        return currentFatSupply;
+    }
+
+    public void setCurrentFatSupply(int currentFatSupply) {
+        this.currentFatSupply = currentFatSupply;
+    }
+
+    public int getHungry() {
+        return hungry;
+    }
+
     private int currentFatSupply;
 
-    public Animal() {
+    public void setHungry(int hungry) {
+        this.hungry = hungry;
+    }
+
+    public List<Property> getPropertyList() {
+        return propertyList;
+    }
+
+    public List<Integer> getCooperateTo() {
+        return cooperateTo;
+    }
+
+    public List<Integer> getCommunicateTo() {
+        return communicateTo;
+    }
+
+    public List<Integer> getSymbiontFor() {
+        return symbiontFor;
+    }
+
+    public List<Integer> getSymbiosisWith() {
+        return symbiosisWith;
     }
 
     public Animal(int id, Player player) {
@@ -75,7 +112,7 @@ public class Animal {
     }
 
     int calculateHungry() {
-        int result = MIN_HUNGRY;
+        int result = Constants.MIN_HUNGRY.getValue();
         if (hasProperty(Property.PREDATOR)) result++;
         if (hasProperty(Property.BIG)) result++;
         if (hasProperty(Property.PARASITE)) result += 2;
@@ -384,5 +421,22 @@ public class Animal {
         cooperateTo.forEach(id -> player.getAnimal(id).eatFish(1));
 
         observer.updateChanges(this, "change");
+    }
+
+    public boolean isFed() {
+
+        return fed;
+    }
+
+    public void setFed(boolean fed) {
+        this.fed = fed;
+    }
+
+    public boolean isPoisoned() {
+        return poisoned;
+    }
+
+    public void setPoisoned(boolean poisoned) {
+        this.poisoned = poisoned;
     }
 }

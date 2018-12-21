@@ -77,11 +77,27 @@
             </div>
         </div>
         <p>Games</p>
+        <div th:if="${current!=null}">
+            <h4>Current game</h4>
+            <div class="card">
+                <div class="card-body">
+                    <p>id: <span th:text="${current.id}">id </span></p>
+                    <p>Players: <span th:text="${current.players}">num</span></p>
+                    <span>Total: <span th:text="${current.numberOfPlayers}"></span></span> </p>
+                    <form action="/game/join">
+                        <input type="hidden" name="gameId" th:value="${current.id}">
+                        <button type="submit">join game</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
         <div class="row" th:each="game : ${games}">
             <div class="card">
                 <div class="card-body">
                     <p>id: <span th:text="${game.id}">id </span></p>
                     <p>players: <span th:text="${game.numberOfPlayers}">num</span></p>
+                    <span>Total: <span th:text="${game.numberOfPlayers}"></span></span> </p>
                     <form action="/game/join">
                         <input type="hidden" name="gameId" th:value="${game.id}">
                         <button type="submit">join game</button>

@@ -1,7 +1,7 @@
-package com.model.game;
+package com.game;
 
-import com.model.game.constants.Phase;
-import com.model.game.constants.Property;
+import com.game.constants.Phase;
+import com.game.constants.Property;
 
 class EvolutionPhase {
 

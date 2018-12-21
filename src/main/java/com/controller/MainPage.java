@@ -6,6 +6,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.security.Principal;
+
 @Controller
 public class MainPage {
 
@@ -13,13 +15,11 @@ public class MainPage {
     GameService gameService;
 
     @GetMapping({"/", "index"})
-    public String hello(Model model) {
-        model.addAttribute("games", gameService.getAllGames());
+    public String hello(Model model, Principal principal) {
+        if (principal != null) {
+            model.addAttribute("games", gameService.getGamesToJoin(principal.getName()));
+            model.addAttribute("current", gameService.getCurrentGame(principal.getName()));
+        }
         return "index";
-    }
-
-    @GetMapping("/test")
-    public String test() {
-        return "test";
     }
 }

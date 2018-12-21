@@ -1,33 +1,35 @@
-package com.model.game;
+package com.game;
 
-import com.google.gson.annotations.Expose;
-import com.model.game.constants.Constants;
-import com.model.game.constants.Property;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.game.constants.Constants;
+import com.game.constants.Property;
 
 import java.util.*;
 
+@JsonInclude(JsonInclude.Include.NON_EMPTY) //skip empty collections
 public class Player {
 
-    private final transient List<Card> newCards = new ArrayList<>();
-    //@Expose
+    private final List<Card> newCards = new ArrayList<>();
     private final List<Card> cards = new ArrayList<>();
-    @Expose
     private final Map<Integer, Animal> animals = new HashMap<>();
-    private transient int requiredCards = Constants.START_NUMBER_OF_CARDS.getValue();
-    private transient int points;
-    private transient boolean leftGame;
-    private transient int deletedCard;
+    private int requiredCards = Constants.START_NUMBER_OF_CARDS.getValue();
+    private int points;
+    private boolean leftGame;
+    private int deletedCard;
     private int orderInMove;
     private int usedCards;
-    //include json
-    @Expose
+
+    //include in json - has getter
     private String name;
-    @Expose
     private boolean doEat;
 
     public Player(String login, int order) {
         this.name = login;
         this.orderInMove = order;
+    }
+
+    public boolean isDoEat() {
+        return doEat;
     }
 
     public String getName() {
@@ -38,13 +40,25 @@ public class Player {
         this.name = name;
     }
 
+
+    public void setDoEat(boolean bool) {
+        doEat = bool;
+    }
+
+    public List<Card> getCards() {
+        newCards.clear();
+        deletedCard = 0;
+        return cards;
+    }
+
+    public Map<Integer, Animal> getAnimals() {
+        return animals;
+    }
+
     int getOrder() {
         return orderInMove;
     }
 
-    void setDoEat(boolean bool) {
-        doEat = bool;
-    }
 
     void resetGrazing() {
         animals.forEach((k, v) -> v.setDoGrazing(false));
@@ -62,9 +76,6 @@ public class Player {
         return leftGame;
     }
 
-    boolean doEat() {
-        return doEat;
-    }
 
     void addCard(Card card) {
         cards.add(card);
@@ -101,7 +112,7 @@ public class Player {
     }
 
     int getPoints() {
-        animals.forEach((k, v) -> points += v.hungry); //how to calculate double cards?
+        animals.forEach((k, v) -> points += v.getHungry()); //how to calculate double cards?
         return points;
     }
 
@@ -117,7 +128,7 @@ public class Player {
     boolean feedScavenger() {
 
         for (Animal animal : animals.values()) {
-            if (animal.hasProperty(Property.SCAVENGER) && animal.hungry > 0) {
+            if (animal.hasProperty(Property.SCAVENGER) && animal.getHungry() > 0) {
                 animal.eatFish(1);
                 return true;
             }
@@ -178,26 +189,27 @@ public class Player {
 
     void animalsDie() {
         Collection<Animal> all = animals.values();
-        Iterator<Animal> it = all.iterator(); //to remove animal safety;
+        //to remove animal safety;
+        Iterator<Animal> it = all.iterator();
         while (it.hasNext()) {
             Animal animal = it.next();
-            if (animal.hungry > 0 || animal.poisoned) {
+            if (animal.getHungry() > 0 || animal.isPoisoned()) {
                 animal.die();
-                usedCards += animal.hungry;
+                usedCards += animal.getHungry();
                 it.remove();
             }
         }
     }
 
     void resetFedFlag() {
-        animals.forEach((k, v) -> v.fed = false);
+        animals.forEach((k, v) -> v.setFed(false));
     }
 
     void resetFields() {
         for (Animal an : animals.values()) {
             an.setHungry();
             an.setAttack(false);
-            an.fed = false;
+            an.setFed(false);
             an.setDoPiracy(false);
             an.setDoGrazing(false);
             doEat = false;
@@ -247,12 +259,6 @@ public class Player {
         if (!hasAnimals() && !hasCards())
             requiredCards = Constants.START_NUMBER_OF_CARDS.getValue();
         else requiredCards = animals.size() + Constants.NUMBER_OF_EXTRA_CARD.getValue();
-    }
-
-    List<Card> getCards() {
-        newCards.clear();
-        deletedCard = 0;
-        return cards;
     }
 
     private boolean hasCards() {

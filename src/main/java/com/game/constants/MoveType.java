@@ -1,4 +1,4 @@
-package com.model.game.constants;
+package com.game.constants;
 
 public enum MoveType {
     SAVE_GAME,

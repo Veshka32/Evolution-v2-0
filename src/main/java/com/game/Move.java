@@ -1,11 +1,24 @@
-package com.model.game;
+package com.game;
 
+import com.game.constants.MoveType;
+import com.game.constants.Property;
 import com.google.gson.Gson;
-import com.model.game.constants.MoveType;
-import com.model.game.constants.Property;
 
 public class Move {
-    private final String player;
+    private String player;
+
+    public Move(int cardId, int animalId, int secondAnimalId, String move, String property, String log) {
+        this.cardId = cardId;
+        this.animalId = animalId;
+        this.secondAnimalId = secondAnimalId;
+        if (move != null) this.move = MoveType.valueOf(move);
+        if (property != null) this.property = Property.valueOf(property);
+        this.log = log;
+    }
+
+    public void setMove(MoveType move) {
+        this.move = move;
+    }
     private final int cardId;
     private final int animalId;
     private final int secondAnimalId;
@@ -13,15 +26,12 @@ public class Move {
     private MoveType move;
     private Property property;
 
+    public void setProperty(Property property) {
+        this.property = property;
+    }
 
-    public Move(String player, int cardId, int animalId, int secondAnimalId, String move, String property, String log) {
+    public void setPlayer(String player) {
         this.player = player;
-        this.cardId = cardId;
-        this.animalId = animalId;
-        this.secondAnimalId = secondAnimalId;
-        if (move != null) this.move = MoveType.valueOf(move);
-        if (property != null) this.property = Property.valueOf(property);
-        this.log = log;
     }
 
     public MoveType getMove() {

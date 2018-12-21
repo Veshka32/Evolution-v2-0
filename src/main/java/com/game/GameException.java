@@ -1,4 +1,4 @@
-package com.model.game;
+package com.game;
 
 public class GameException extends Exception {
     public GameException(String message) {

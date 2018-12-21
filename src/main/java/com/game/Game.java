@@ -1,13 +1,9 @@
-package com.model.game;
+package com.game;
 
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.model.game.constants.Constants;
-import com.model.game.constants.Phase;
-import com.model.game.constants.Property;
+import com.game.constants.Constants;
+import com.game.constants.Phase;
+import com.game.constants.Property;
 
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
@@ -16,11 +12,10 @@ import java.util.stream.Collectors;
 public class Game {
     private int id;
     private int numberOfPlayers;
-    private transient String winners; //game has winners=>game end=>never saved
-    private transient String lastLogMessage;
-    private transient Set<Animal> changedAnimals = new HashSet<>();
-    private transient Set<Integer> deletedAnimalsId = new HashSet<>();
-    private transient JsonElement element;
+    private String winners; //game has winners=>game end=>never saved
+    private String lastLogMessage;
+    private Set<Animal> changedAnimals = new HashSet<>();
+    private Set<Integer> deletedAnimalsId = new HashSet<>();
     private int animalID;
     private int round;
     private int playerOnMove;
@@ -32,10 +27,12 @@ public class Game {
     private ExtraMessage extraMessage;
     private Phase phase = Phase.START;
     private int food;
+    private GameDTO2 dto = new GameDTO2();
 
     public Game(int id, int numberOfPlayers, String login) {
         this.id = id;
         this.numberOfPlayers = numberOfPlayers;
+        dto.setId(id);
         addPlayer(login);
     }
 
@@ -91,76 +88,70 @@ public class Game {
         error = null;
         changedAnimals.clear();
         deletedAnimalsId.clear();
-        element = null;
+        //dto.clear();
     }
 
-    public String getFullJson(String name) {
-        Gson gsonExpose = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().registerTypeHierarchyAdapter(List.class, new JsonAdapter()).create();
-        Gson gson = new Gson();
+    public GameDTO2 getFullJson(String name) {
         if (error != null) {
-            return errorToJson(name, element, gson);
+            if (playersOrder.get(playerOnMove).equals(name)) {
+                dto.setError(error);
+                return dto;
+            } else return null;
         }
+        dto.setPhase(phase);
+        dto.setPlayers(players.values());
+        dto.setFood(food); //in phase?
+        dto.setId(id);
+        dto.setLog(log.toString());//???
 
-        if (element == null) {
-            element = new JsonObject();
-            element.getAsJsonObject().add("phase", gson.toJsonTree(phase));//add object
-            element.getAsJsonObject().add("players", gsonExpose.toJsonTree(players));
-            element.getAsJsonObject().addProperty("food", food); //add primitive
-            element.getAsJsonObject().addProperty("id", id);
+        if (extraMessage != null)
+            dto.setExtraMessage(extraMessage);
 
-            element.getAsJsonObject().addProperty("playersList", new ArrayList<>(players.keySet()).toString());
-            element.getAsJsonObject().addProperty("log", log.toString());
-
-            if (extraMessage != null)
-                element.getAsJsonObject().add(extraMessage.getType().toString(), gson.toJsonTree(extraMessage));
-
-            if (phase.equals(Phase.END)) element.getAsJsonObject().addProperty("winners", winners);
-            if (round == -1) element.getAsJsonObject().addProperty("last", 0);
-        }
+        if (phase.equals(Phase.END)) dto.setWinners(winners);
+        if (round == -1) dto.setLastRound(true); //else null
 
         //these json fields are player name sensitive
-        element.getAsJsonObject().addProperty("player", name);
-        element.getAsJsonObject().add("cards", gson.toJsonTree(players.get(name).getCards()));
-        if (playersOrder.size() > 0 && playersOrder.get(playerOnMove).equals(name))
-            element.getAsJsonObject().addProperty("status", true);
-        else element.getAsJsonObject().addProperty("status", false);
-
-        return gson.toJson(element);
+        dto.setPlayer(name);
+        dto.setCards(players.get(name).getCards());
+        if (!playersOrder.isEmpty() && playersOrder.get(playerOnMove).equals(name))
+            dto.setStatus(true); //else default false
+        return dto;
     }
 
-    public String getLightWeightJson(String name) {
-        Gson gsonExpose = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().registerTypeHierarchyAdapter(List.class, new JsonAdapter()).create();
-        Gson gson = new Gson();
-        element = new JsonObject();
+    public GameDTO2 getLightWeightJson(String name) {
+
         if (error != null) {
-            return errorToJson(name, element, gson);
+            if (playersOrder.get(playerOnMove).equals(name)) {
+                dto.setError(error);
+                return dto;
+            } else return null;
         }
-        element.getAsJsonObject().add("phase", gson.toJsonTree(phase));//add object
+
+        dto.setPhase(phase);
         if (!deletedAnimalsId.isEmpty())
-            element.getAsJsonObject().add("deleteAnimal", gsonExpose.toJsonTree(deletedAnimalsId));
+            dto.setDeleteAnimal(deletedAnimalsId.toArray(new Integer[]{}));
         if (!changedAnimals.isEmpty())
-            element.getAsJsonObject().add("changedAnimal", gsonExpose.toJsonTree(changedAnimals));
-        element.getAsJsonObject().addProperty("log", lastLogMessage);
+            dto.setChangedAnimal(changedAnimals.toArray(new Animal[]{}));
+        dto.setLog(lastLogMessage);
 
         if (phase.equals(Phase.EVOLUTION)) {
             if (players.get(name).hasNewCards())
-                element.getAsJsonObject().add("newCards", gson.toJsonTree(players.get(name).getNewCards()));
+                dto.setNewCards(players.get(name).getNewCards().toArray(new Card[]{}));
             else if (players.get(name).hasDeletedCard())
-                element.getAsJsonObject().addProperty("deletedCard", players.get(name).getDeletedCard());
+                dto.setDeletedCard(players.get(name).getDeletedCard());
         }
 
-        if (phase.equals(Phase.FEED)) element.getAsJsonObject().addProperty("food", food); //add primitive
+        if (phase.equals(Phase.FEED)) dto.setFood(food);
 
-        if (playersOrder.size() > 0 && playersOrder.get(playerOnMove).equals(name))
-            element.getAsJsonObject().addProperty("status", true);
-        else element.getAsJsonObject().addProperty("status", false);
+        if (!playersOrder.isEmpty() && playersOrder.get(playerOnMove).equals(name))
+            dto.setStatus(true); //else default false
 
         if (extraMessage != null)
-            element.getAsJsonObject().add(extraMessage.getType().toString(), gson.toJsonTree(extraMessage));
+            dto.setExtraMessage(extraMessage);
 
-        if (phase.equals(Phase.END)) element.getAsJsonObject().addProperty("winners", winners);
-        if (round == -1) element.getAsJsonObject().addProperty("last", 0);
-        return gson.toJson(element);
+        if (phase.equals(Phase.END)) dto.setWinners(winners);
+        if (round == -1) dto.setLastRound(true); //else null
+        return dto;
     }
 
     public void playerBack(String name) {
@@ -185,11 +176,6 @@ public class Game {
 
     public boolean isLeft() {
         return players.values().stream().allMatch(Player::doLeaveGame);
-    }
-
-    public void addLogMessage(String message) {
-        lastLogMessage = "\n" + message;
-        log.append(lastLogMessage);
     }
 
     public void makeMove(Move move) {
@@ -250,7 +236,8 @@ public class Game {
     }
 
     void switchPlayerOnMove() {
-        playerOnMove = (playerOnMove + 1) % playersOrder.size(); // circular array;
+        // circular array
+        playerOnMove = (playerOnMove + 1) % playersOrder.size();
     }
 
     int getFood() {
@@ -328,13 +315,6 @@ public class Game {
         return extraMessage;
     }
 
-    private String errorToJson(String name, JsonElement element, Gson gson) {
-        if (playersOrder.get(playerOnMove).equals(name)) {
-            element.getAsJsonObject().addProperty("error", error);
-            return gson.toJson(element);
-        } else return null;
-    }
-
 
     private void resetPlayersOrder() {
         playersOrder = new ArrayList<>(players.keySet());
@@ -367,11 +347,13 @@ public class Game {
                     round++;
                 }
 
-                if (cardList.isEmpty()) round = -1;//last round
+                //last round
+                if (cardList.isEmpty()) round = -1;
                 break;
         }
         resetPlayersOrder();
-        playerOnMove = round % players.size(); //circular array; each round starts by next player
+        //circular array; each round starts by next player
+        playerOnMove = round % players.size();
     }
 
     private void endGame() {
@@ -394,7 +376,6 @@ public class Game {
             if (flag == 0) return;
         }
     }
-
 
     private void addCardsOnStart(Player player) {
         for (int i = 0; i < Constants.START_NUMBER_OF_CARDS.getValue(); i++)

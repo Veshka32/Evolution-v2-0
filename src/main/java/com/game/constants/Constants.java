@@ -1,4 +1,4 @@
-package com.model.game.constants;
+package com.game.constants;
 
 public enum Constants {
     START_NUMBER_OF_CARDS(6),
@@ -9,7 +9,8 @@ public enum Constants {
     MIN_NUMBER_OF_PLAYERS(2),
     PARASITE_HUNGRITY(2),
     START_HUNGRITY(1),
-    MAX_NUMBER_PF_PLAYERS(4);
+    MAX_NUMBER_PF_PLAYERS(4),
+    MIN_HUNGRY(1);
 
     private final int id;
 

@@ -1,6 +1,6 @@
-package com.model.game;
+package com.game;
 
-import com.model.game.constants.Property;
+import com.game.constants.Property;
 
 import java.util.List;
 import java.util.Random;
@@ -144,7 +144,7 @@ class FeedPhase {
         if (game.getFood() == 0) throw new GameException("There is no more food");
 
         Player player = game.getPlayer(move.getPlayer());
-        if (player.doEat()) throw new GameException("You've already taken food");
+        if (player.isDoEat()) throw new GameException("You've already taken food");
 
         Animal animal = player.getAnimal(move.getAnimalId());
         if (animal == null) throw new GameException("Feeding stranger animal is danger!");

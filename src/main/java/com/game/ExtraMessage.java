@@ -1,17 +1,19 @@
-package com.model.game;
+package com.game;
 
-import com.model.game.constants.Property;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.game.constants.Property;
 
 import java.util.List;
 
-class ExtraMessage {
+@JsonInclude(JsonInclude.Include.NON_EMPTY) //skip empty collections
+public class ExtraMessage {
     private String playerOnAttack;
     private int predator;
     private String playerUnderAttack;
     private Property type;
     private List<Integer> victims;
 
-    ExtraMessage(String name, int id, String name1, Property type) {
+    public ExtraMessage(String name, int id, String name1, Property type) {
         playerOnAttack = name;
         predator = id;
         playerUnderAttack = name1;
@@ -54,4 +56,7 @@ class ExtraMessage {
         this.type = type;
     }
 
+    public List<Integer> getVictims() {
+        return victims;
+    }
 }
