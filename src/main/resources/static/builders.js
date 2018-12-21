@@ -89,8 +89,7 @@ function buildAnimal(animal, flag) {
             }
         }
         else if (key == "ownerName")
-        else
-        if (key == "currentFatSupply" && animal[key] > 0) {
+        else if (key == "currentFatSupply" && animal[key] > 0) {
             let span = document.createElement("span");
             span.setAttribute("class", "fat");
             for (let i = 0; i < animal[key]; i++) {
