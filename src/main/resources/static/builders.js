@@ -88,7 +88,6 @@ function buildAnimal(animal, flag) {
                 animDiv.appendChild(span);
             }
         }
-        else if (key == "ownerName")
         else if (key == "currentFatSupply" && animal[key] > 0) {
             let span = document.createElement("span");
             span.setAttribute("class", "fat");

@@ -12,15 +12,14 @@ import java.util.stream.Collectors;
 public class Game {
     private int id;
     private int numberOfPlayers;
-    private String winners; //game has winners=>game end=>never saved
-    private String lastLogMessage;
+    private String winners;
+    private String log;
     private Set<Animal> changedAnimals = new HashSet<>();
     private Set<Integer> deletedAnimalsId = new HashSet<>();
     private int animalID;
     private int round;
     private int playerOnMove;
     private String error;
-    private StringBuilder log = new StringBuilder();
     private List<Card> cardList;
     private Map<String, Player> players = new HashMap<>();
     private List<String> playersOrder = new ArrayList<>();
@@ -32,7 +31,6 @@ public class Game {
     public Game(int id, int numberOfPlayers, String login) {
         this.id = id;
         this.numberOfPlayers = numberOfPlayers;
-        dto.setId(id);
         addPlayer(login);
     }
 
@@ -67,8 +65,7 @@ public class Game {
     public void addPlayer(String login) {
         Player player = new Player(login, players.size());
         players.put(login, player);
-        lastLogMessage = login + " joined game at " + new Date() + "\n";
-        log.append(lastLogMessage);
+        log = login + " joined game at " + new Date() + "\n";
     }
 
     public boolean isFull() {
@@ -88,25 +85,17 @@ public class Game {
         error = null;
         changedAnimals.clear();
         deletedAnimalsId.clear();
-        //dto.clear();
+        dto = new GameDTO2();
     }
 
     public GameDTO2 getFullJson(String name) {
-        if (error != null) {
-            if (playersOrder.get(playerOnMove).equals(name)) {
-                dto.setError(error);
-                return dto;
-            } else return null;
-        }
         dto.setPhase(phase);
         dto.setPlayers(players.values());
-        dto.setFood(food); //in phase?
         dto.setId(id);
-        dto.setLog(log.toString());//???
-
-        if (extraMessage != null)
-            dto.setExtraMessage(extraMessage);
-
+        dto.setLog(log);
+        if (!playersOrder.isEmpty()) dto.setPlayerOnMove(playersOrder.get(playerOnMove));
+        if (extraMessage != null) dto.setExtraMessage(extraMessage);
+        if (phase.equals(Phase.FEED)) dto.setFood(food);
         if (phase.equals(Phase.END)) dto.setWinners(winners);
         if (round == -1) dto.setLastRound(true); //else null
 
@@ -114,17 +103,18 @@ public class Game {
         dto.setPlayer(name);
         dto.setCards(players.get(name).getCards());
         if (!playersOrder.isEmpty() && playersOrder.get(playerOnMove).equals(name))
-            dto.setStatus(true); //else default false
+            dto.setStatus(true);
+        else dto.setStatus(false);
         return dto;
     }
 
-    public GameDTO2 getLightWeightJson(String name) {
+    public Optional<GameDTO2> getLightWeightJson(String name) {
 
         if (error != null) {
             if (playersOrder.get(playerOnMove).equals(name)) {
                 dto.setError(error);
-                return dto;
-            } else return null;
+                return Optional.of(dto);
+            } else return Optional.empty();
         }
 
         dto.setPhase(phase);
@@ -132,7 +122,7 @@ public class Game {
             dto.setDeleteAnimal(deletedAnimalsId.toArray(new Integer[]{}));
         if (!changedAnimals.isEmpty())
             dto.setChangedAnimal(changedAnimals.toArray(new Animal[]{}));
-        dto.setLog(lastLogMessage);
+        dto.setLog(log);
 
         if (phase.equals(Phase.EVOLUTION)) {
             if (players.get(name).hasNewCards())
@@ -151,7 +141,7 @@ public class Game {
 
         if (phase.equals(Phase.END)) dto.setWinners(winners);
         if (round == -1) dto.setLastRound(true); //else null
-        return dto;
+        return Optional.of(dto);
     }
 
     public void playerBack(String name) {
@@ -180,8 +170,7 @@ public class Game {
 
     public void makeMove(Move move) {
 
-        lastLogMessage = "\n" + move.getPlayer() + " " + move.getLog() + " at " + new Date();
-        log.append(lastLogMessage);
+        log = "\n" + move.getPlayer() + " " + move.getLog() + " at " + new Date();
         switch (move.getMove()) {
             case SAVE_GAME:
                 return;
@@ -263,12 +252,8 @@ public class Game {
     }
 
     void addLogMessage(String... s) {
-        StringBuilder sb = new StringBuilder(log);
         for (String str : s)
-            sb.append(str);
-
-        lastLogMessage = sb.toString();
-        log.append(lastLogMessage);
+            log += str;
     }
 
     void makeAnimal(Move move) {

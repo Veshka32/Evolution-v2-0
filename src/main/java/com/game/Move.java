@@ -2,7 +2,6 @@ package com.game;
 
 import com.game.constants.MoveType;
 import com.game.constants.Property;
-import com.google.gson.Gson;
 
 public class Move {
     private String player;
@@ -60,10 +59,5 @@ public class Move {
 
     int getSecondAnimalId() {
         return secondAnimalId;
-    }
-
-    @Override
-    public String toString() {
-        return new Gson().toJson(this);
     }
 }

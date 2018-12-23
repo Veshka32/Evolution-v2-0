@@ -6,17 +6,23 @@ import com.game.constants.Phase;
 import java.util.Collection;
 import java.util.List;
 
-@JsonInclude(JsonInclude.Include.NON_EMPTY) //skip empty collections
+@JsonInclude(JsonInclude.Include.NON_DEFAULT) //skip empty collections
 public class GameDTO2 {
 
     private String winners;
+
     private Boolean lastRound;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     private ExtraMessage extraMessage;
     private Integer id;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Phase phase;
     private Collection<Player> players;
+    private List<String> playersNames;
+    private Boolean status;
+
+    public List<String> getPlayersNames() {
+        return playersNames;
+    }
+
     private String playerOnMove;
     private Integer food;
     private String log;
@@ -28,7 +34,10 @@ public class GameDTO2 {
     //player specific properties
     private String player;
     private List<Card> cards;
-    private boolean status;
+
+    public void setPlayersNames(List<String> playersNames) {
+        this.playersNames = playersNames;
+    }
 
     public Card[] getNewCards() {
         return newCards;
@@ -79,7 +88,7 @@ public class GameDTO2 {
         this.winners = winners;
     }
 
-    public boolean isLastRound() {
+    public Boolean isLastRound() {
         return lastRound;
     }
 
@@ -95,7 +104,7 @@ public class GameDTO2 {
         this.extraMessage = extraMessage;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -127,7 +136,7 @@ public class GameDTO2 {
         this.playerOnMove = playerOnMove;
     }
 
-    public int getFood() {
+    public Integer getFood() {
         return food;
     }
 
@@ -159,7 +168,7 @@ public class GameDTO2 {
         this.cards = cards;
     }
 
-    public boolean isStatus() {
+    public Boolean isStatus() {
         return status;
     }
 

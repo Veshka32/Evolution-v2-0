@@ -1,16 +1,16 @@
 package com.game;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
 public class GameDTO {
     private int id;
     private int numberOfPlayers;
-    private List<String> players = new ArrayList<>();
+    private Collection<String> players;
 
     public GameDTO(Game game) {
         this.id = game.getId();
         this.numberOfPlayers = game.getNumberOfPlayers();
+        this.players = game.getPlayers();
     }
 
     public int getId() {
@@ -21,7 +21,7 @@ public class GameDTO {
         return numberOfPlayers;
     }
 
-    public List<String> getPlayers() {
+    public Collection<String> getPlayers() {
         return players;
     }
 }

@@ -74,12 +74,20 @@ function onMessage(message) {
         for (let i = 0; i < game.players.length; i++) {
             let player = game.players[i];
             if (document.getElementById(player.name) == null) common.appendChild(buildPlayerBlock(player));
-            document.getElementById("players").innerText += player.name + "  ";
+            let span = $('<span/>', {
+                text: player.name + "  ",
+            });
+            if (player.leftGame == true) span.addClass('text-danger');
+            else span.addClass('text-success');
+            $("#players").append(span);
         }
     }
 
     if (game.hasOwnProperty("player")) {
         playerName = game.player;
+    }
+    if (game.hasOwnProperty("playerOnMove")) {
+        $('#playerOnMove').text(game.playerOnMove);
     }
 
     if (game.hasOwnProperty("changedAnimal")) {
@@ -201,9 +209,9 @@ function clearFields() {
     secondAnimalId = null;
     playedCardId = null;
     tailLoss = false;
-    document.getElementById("doing").innerText = "";
+    $("#doing").empty();
     document.getElementById("wrapper").style.pointerEvents = "none";
-    document.getElementById("playerList").innerText = "";
+    $("#players").empty();
 }
 
 function wait() {

@@ -12,6 +12,11 @@ public class Player {
     private final List<Card> newCards = new ArrayList<>();
     private final List<Card> cards = new ArrayList<>();
     private final Map<Integer, Animal> animals = new HashMap<>();
+
+    public boolean isLeftGame() {
+        return leftGame;
+    }
+
     private int requiredCards = Constants.START_NUMBER_OF_CARDS.getValue();
     private int points;
     private boolean leftGame;
