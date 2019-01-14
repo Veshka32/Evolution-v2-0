@@ -34,7 +34,7 @@
         <p><h4>or</h4></p>
         <p><a href="register">Sign up</a></p></div>
     <div sec:authorize="isAuthenticated()">
-        Logged in as: <span id="user"></span>
+        Logged in as: <span id="user" th:text="${name}"></span>
         <div class="row">
             <div class="form-check col-sm-4">
                 <div class="card">

@@ -18,6 +18,7 @@ public class MainPage {
     public String hello(Model model, Principal principal) {
         if (principal != null) {
             model.addAttribute("games", gameService.getGamesToJoin(principal.getName()));
+            model.addAttribute("name",principal.getName());
             gameService.getCurrentGame(principal.getName())
                     .ifPresent(g -> model.addAttribute("current", g));
         }
