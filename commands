@@ -1,1 +1,12 @@
 curl -X POST http://localhost:8080/evogame/actuator/shutdown
+
+#first database migration
+mvn flyway:migrate -Dflyway.configFiles=flyway.properties
+
+#check
+mvn flyway:info -Dflyway.configFiles=flyway.properties
+
+#repair after fail
+mvn flyway:repair -Dflyway.configFiles=flyway.properties
+
+#also validate, clean, baseline
