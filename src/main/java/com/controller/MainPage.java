@@ -19,11 +19,11 @@ public class MainPage {
     @GetMapping({"/", "index"})
     public String hello(Model model, Principal principal) {
         if (principal != null) {
-            Map<String, Object> details = (Map<String, Object>) ((OAuth2Authentication) principal).getUserAuthentication().getDetails();
+           // Map<String, Object> details = (Map<String, Object>) ((OAuth2Authentication) principal).getUserAuthentication().getDetails();
 
             //model.addAttribute("games", gameService.getGamesToJoin(principal.getName()));
-            model.addAttribute("name",details.get("name"));
-            gameService.getCurrentGame((String)details.get("name"))
+            model.addAttribute("name",principal.getName());
+            gameService.getCurrentGame(principal.getName())
                     .ifPresent(g -> model.addAttribute("current", g));
         }
         return "index";
