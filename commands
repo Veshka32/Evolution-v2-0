@@ -10,3 +10,10 @@ mvn flyway:info -Dflyway.configFiles=flyway.properties
 mvn flyway:repair -Dflyway.configFiles=flyway.properties
 
 #also validate, clean, baseline
+
+
+docker run -d -p 3307:3306 --name evo_db -e MYSQL_ROOT_PASSWORD=root evo_db
+docker build -t evo_db .
+docker container rm -f -v evo_db
+docker image rm evo_dbdoc
+
